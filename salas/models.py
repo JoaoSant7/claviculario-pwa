@@ -1,12 +1,5 @@
-import uuid
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-# Sala
-###  - id (UUID)
-#   - codigo (CharField, unique)  ← ex: "301A"
-#  - andar (IntegerField)
-#  - descricao (CharField)
 
 
 class Sala(models.Model):
