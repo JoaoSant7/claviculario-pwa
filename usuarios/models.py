@@ -58,5 +58,9 @@ class Aluno(Usuario):
 	)
 
 
+class Coordenador(Usuario):
+	curso = models.CharField(max_length=100, verbose_name="Curso")
+
+
 class Professor(Usuario):
 	materias = models.CharField(max_length=100, verbose_name="Matéria")
