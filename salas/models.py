@@ -6,9 +6,7 @@ class Sala(models.Model):
 	andar = models.PositiveSmallIntegerField(
 		validators=[MinValueValidator(0), MaxValueValidator(22)], verbose_name="Andar"
 	)
-	numero = models.PositiveSmallIntegerField(
-		validators=[MinValueValidator(1), MaxValueValidator(6)]
-	)
+	numero = models.CharField(max_length=4)
 	descricao = models.CharField(max_length=100)
 
 	@property
