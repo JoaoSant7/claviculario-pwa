@@ -58,9 +58,15 @@ class Aluno(Usuario):
 	)
 
 
+class Professor(Usuario):
+	materias = models.CharField(max_length=100, verbose_name="Matéria")
+
+
 class Coordenador(Usuario):
 	curso = models.CharField(max_length=100, verbose_name="Curso")
 
 
-class Professor(Usuario):
-	materias = models.CharField(max_length=100, verbose_name="Matéria")
+class Funcionario(Usuario):
+	class FuncaoChoices(models.TextChoices):
+		ZELADORIA = "zelador", "Zeladoria"
+		MANUTENCAO = "manutencao", "Manutenção"
