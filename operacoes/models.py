@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+
+class Operacao(models.Model):
+	usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.PROTECT)
