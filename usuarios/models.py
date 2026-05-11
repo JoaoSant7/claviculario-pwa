@@ -36,13 +36,7 @@ class Usuario(models.Model):
 	)
 
 	class Meta:
-		abstract = True
-		verbose_name = "Usuário"
-		verbose_name_plural = "Usuários"
-		ordering = ["nome", "sobrenome"]
-
-	def __str__(self):
-		return f"{self.nome} - {self.matricula}"
+		pass
 
 
 class Aluno(Usuario):
