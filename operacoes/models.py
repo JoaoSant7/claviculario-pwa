@@ -6,7 +6,7 @@ class Operacao(models.Model):
 	chave = models.ForeignKey("chaves.Chave", on_delete=models.PROTECT)
 
 	class Meta:
-		abstract = True  # Operacao nunca é instanciada diretamente
+		abstract = True  
 
 	def __str__(self):
 		return f"Operação #{self.pk} - {self.usuario}"
@@ -20,7 +20,7 @@ class Emprestimo(Operacao):
 	def esta_ativo(self):
 		return self.devolvido_em is None
 
-	def __str__(self):  # era __strg__, typo corrigido
+	def __str__(self):  
 		return f"Empréstimo #{self.pk} - Chave: {self.chave}"
 
 	class Meta:
@@ -29,7 +29,7 @@ class Emprestimo(Operacao):
 		ordering = ["-feito_em"]
 
 
-class Devolucao(models.Model):  # era só `class Devolucao:`, não era um Model
+class Devolucao(models.Model):  
 	feito_em = models.DateTimeField(auto_now_add=True)
 	emprestimo = models.OneToOneField(
 		Emprestimo, on_delete=models.PROTECT, related_name="devolucao"
