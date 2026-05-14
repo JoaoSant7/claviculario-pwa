@@ -43,4 +43,4 @@ class Devolucao(models.Model):
 		verbose_name_plural = "Devoluções"
 		ordering = ["-feito_em"]
 
-
+.
