@@ -34,9 +34,21 @@ class Usuario(models.Model):
 			)
 		],
 	)
+	rfid_tag = models.CharField(
+		max_length=64,
+		unique=True,
+		null=True,
+		blank=True,
+		verbose_name="Tag RFID",
+		help_text="Hash da tag RFID do crachá do usuário",
+	)
+
+	def __str__(self):
+		return f"{self.nome} {self.sobrenome} ({self.matricula})"
 
 	class Meta:
-		pass
+		verbose_name = "Usuário"
+		verbose_name_plural = "Usuários"
 
 
 class Aluno(Usuario):
@@ -51,16 +63,39 @@ class Aluno(Usuario):
 		verbose_name="Turma",
 	)
 
+	class Meta:
+		verbose_name = "Aluno"
+		verbose_name_plural = "Alunos"
+
 
 class Professor(Usuario):
 	materias = models.CharField(max_length=100, verbose_name="Matéria")
 
+	class Meta:
+		verbose_name = "Professor"
+		verbose_name_plural = "Professores"
+
 
 class Coordenador(Usuario):
 	curso = models.CharField(max_length=100, verbose_name="Curso")
+
+	class Meta:
+		verbose_name = "Coordenador"
+		verbose_name_plural = "Coordenadores"
 
 
 class Funcionario(Usuario):
 	class FuncaoChoices(models.TextChoices):
 		ZELADORIA = "zelador", "Zeladoria"
 		MANUTENCAO = "manutencao", "Manutenção"
+		PORTEIRO = "porteiro", "Porteiro"
+
+	funcao = models.CharField(
+		max_length=20,
+		choices=FuncaoChoices.choices,
+		verbose_name="Função",
+	)
+
+	class Meta:
+		verbose_name = "Funcionário"
+		verbose_name_plural = "Funcionários"
