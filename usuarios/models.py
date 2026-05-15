@@ -1,7 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
 
-
 class Usuario(models.Model):
 	nome = models.CharField(max_length=30, verbose_name="Primeiro Nome")
 	sobrenome = models.CharField(max_length=30, verbose_name="Sobrenome")
@@ -34,6 +33,14 @@ class Usuario(models.Model):
 			)
 		],
 	)
+	rfid_tag = models.CharField(
+		max_length=64,
+		unique=True,
+		null=True,
+		blank=True,
+		verbose_name="Tag RFID",
+		help_text="Hash da tag RFID do crachá do usuário",
+	)
 
 	class Meta:
 		pass
@@ -64,3 +71,10 @@ class Funcionario(Usuario):
 	class FuncaoChoices(models.TextChoices):
 		ZELADORIA = "zelador", "Zeladoria"
 		MANUTENCAO = "manutencao", "Manutenção"
+		PORTEIRO = "porteiro", "Porteiro"
+
+	funcao = models.CharField(
+		max_length=20,
+		choices=FuncaoChoices.choices,
+		verbose_name="Função",
+	)
