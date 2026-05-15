@@ -41,6 +41,8 @@ class Usuario(models.Model):
 		verbose_name = "Usuário"
 		verbose_name_plural = "Usuários"
 
+	def __str__(self):
+		return f"{self.nome} {self.sobrenome} ({self.matricula})"
 
 class Aluno(Usuario):
 	class TurmaChoices(models.TextChoices):
