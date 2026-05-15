@@ -36,7 +36,8 @@ class Usuario(models.Model):
 	)
 
 	class Meta:
-		pass
+		verbose_name = "Usuário"
+		verbose_name_plural = "Usuários"
 
 
 class Aluno(Usuario):
@@ -51,14 +52,23 @@ class Aluno(Usuario):
 		verbose_name="Turma",
 	)
 
+	class Meta:
+		verbose_name = "Aluno"
+		verbose_name_plural = "Alunos"
 
 class Professor(Usuario):
 	materias = models.CharField(max_length=100, verbose_name="Matéria")
 
+	class Meta:
+		verbose_name = "Professor"
+		verbose_name_plural = "Professores"
 
 class Coordenador(Usuario):
 	curso = models.CharField(max_length=100, verbose_name="Curso")
 
+	class Meta:
+		verbose_name = "Coordenador"
+		verbose_name_plural = "Coordenadores"
 
 class Funcionario(Usuario):
 	class FuncaoChoices(models.TextChoices):
