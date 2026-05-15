@@ -1,7 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
 
-
 class Usuario(models.Model):
 	nome = models.CharField(max_length=30, verbose_name="Primeiro Nome")
 	sobrenome = models.CharField(max_length=30, verbose_name="Sobrenome")
@@ -43,12 +42,8 @@ class Usuario(models.Model):
 		help_text="Hash da tag RFID do crachá do usuário",
 	)
 
-	def __str__(self):
-		return f"{self.nome} {self.sobrenome} ({self.matricula})"
-
 	class Meta:
-		verbose_name = "Usuário"
-		verbose_name_plural = "Usuários"
+		pass
 
 
 class Aluno(Usuario):
@@ -63,25 +58,13 @@ class Aluno(Usuario):
 		verbose_name="Turma",
 	)
 
-	class Meta:
-		verbose_name = "Aluno"
-		verbose_name_plural = "Alunos"
-
 
 class Professor(Usuario):
 	materias = models.CharField(max_length=100, verbose_name="Matéria")
 
-	class Meta:
-		verbose_name = "Professor"
-		verbose_name_plural = "Professores"
-
 
 class Coordenador(Usuario):
 	curso = models.CharField(max_length=100, verbose_name="Curso")
-
-	class Meta:
-		verbose_name = "Coordenador"
-		verbose_name_plural = "Coordenadores"
 
 
 class Funcionario(Usuario):
@@ -95,7 +78,3 @@ class Funcionario(Usuario):
 		choices=FuncaoChoices.choices,
 		verbose_name="Função",
 	)
-
-	class Meta:
-		verbose_name = "Funcionário"
-		verbose_name_plural = "Funcionários"
