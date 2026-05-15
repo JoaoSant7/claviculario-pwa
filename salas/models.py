@@ -20,6 +20,13 @@ class Sala(models.Model):
 		verbose_name="Descrição",
 		help_text="MAaqueteria, Inovação, etc.",
 		)
+	
+	tipo_sala = models.CharField(
+		max_length=10,
+		choices=TipoSalaChoices.choices,
+		default=TipoSalaChoices.SALA_AULA,
+		verbose_name="Tipo de Sala",
+	)
 
 	@property
 	def codigo(self):
