@@ -35,6 +35,8 @@ class Usuario(models.Model):
 		],
 	)
 
+	ativo = models.BooleanField(default=True, verbose_name="Ativo")
+
 	class Meta:
 		verbose_name = "Usuário"
 		verbose_name_plural = "Usuários"
