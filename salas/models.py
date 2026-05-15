@@ -3,9 +3,16 @@ from django.db import models
 
 
 class Sala(models.Model):
+	class TipoSalaChoices(models.TextChoices):
+		LABORATORIO = "LAB", "Laboratório"
+		SALA_AULA = "SALA", "Sala de Aula"
+		COZINHA = "Cozinha", "cozinha"
+		AUDITORIO = "Auditório", "auditorio"
+
 	andar = models.PositiveSmallIntegerField(
 		validators=[MinValueValidator(0), MaxValueValidator(22)], verbose_name="Andar"
 	)
+	
 	numero = models.CharField(max_length=4)
 	descricao = models.CharField(max_length=100)
 
