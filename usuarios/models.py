@@ -74,3 +74,14 @@ class Funcionario(Usuario):
 	class FuncaoChoices(models.TextChoices):
 		ZELADORIA = "zelador", "Zeladoria"
 		MANUTENCAO = "manutencao", "Manutenção"
+		SECRETARIA = "secretaria", "Secretaria"
+
+	funcao = models.CharField(
+		max_length=20,
+		choices=FuncaoChoices.choices,
+		verbose_name="Função",
+	)
+
+	class Meta:
+		verbose_name = "Funcionário"
+		verbose_name_plural = "Funcionários"
