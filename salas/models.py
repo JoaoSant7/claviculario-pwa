@@ -28,6 +28,11 @@ class Sala(models.Model):
 		verbose_name="Tipo de Sala",
 	)
 
+	class Meta:
+		verbose_name = "Sala"
+		verbose_name_plural = "Salas"
+		ordering = ["andar", "numero"]
+	
 	@property
 	def codigo(self):
 		return f"{self.andar}{self.numero:02d}"
