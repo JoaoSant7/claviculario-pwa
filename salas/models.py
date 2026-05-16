@@ -6,8 +6,8 @@ class Sala(models.Model):
 	class TipoSalaChoices(models.TextChoices):
 		LABORATORIO = "LAB", "Laboratório"
 		SALA_AULA = "SALA", "Sala de Aula"
-		COZINHA = "Cozinha", "cozinha"
-		AUDITORIO = "Auditório", "auditorio"
+		COZINHA = "COZINHA", "Cozinha"
+		AUDITORIO = "AUDITORIO", "Auditório"
 
 	andar = models.PositiveSmallIntegerField(
 		validators=[MinValueValidator(0), MaxValueValidator(22)], verbose_name="Andar"
@@ -28,7 +28,7 @@ class Sala(models.Model):
 		verbose_name="Tipo de Sala",
 	)
 
-	em_manutenção = models.BooleanField(default=False, verbose_name="Em Manutenção")
+	em_manutencao = models.BooleanField(default=False, verbose_name="Em Manutenção")
 
 	class Meta:
 		verbose_name = "Sala"
@@ -37,7 +37,7 @@ class Sala(models.Model):
 	
 	@property
 	def codigo(self):
-		return f"{self.andar}{self.numero:02d}"
+		return f"{self.andar}{self.numero}"
 	
 	def __str__(self):	
 		status = " [EM MANUTENÇÃO]" if self.em_manutencao else ""
