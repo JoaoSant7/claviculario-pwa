@@ -18,7 +18,7 @@ class Sala(models.Model):
 	descricao = models.CharField(
 		max_length=100,
 		verbose_name="Descrição",
-		help_text="MAaqueteria, Inovação, etc.",
+		help_text="Maqueteria, Inovação, etc.",
 		)
 	
 	tipo_sala = models.CharField(
@@ -28,6 +28,8 @@ class Sala(models.Model):
 		verbose_name="Tipo de Sala",
 	)
 
+	em_manutenção = models.BooleanField(default=False, verbose_name="Em Manutenção")
+
 	class Meta:
 		verbose_name = "Sala"
 		verbose_name_plural = "Salas"
@@ -36,3 +38,8 @@ class Sala(models.Model):
 	@property
 	def codigo(self):
 		return f"{self.andar}{self.numero:02d}"
+	
+	def __str__(self):	
+		status = " [EM MANUTENÇÃO]" if self.em_manutencao else ""
+		return f"Sala {self.codigo} - {self.get_tipo_sala_display()}{status}"
+	
