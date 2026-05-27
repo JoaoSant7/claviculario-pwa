@@ -18,9 +18,9 @@ class Sala(models.Model):
 	descricao = models.CharField(
 		max_length=100,
 		verbose_name="Descrição",
-		help_text="MAaqueteria, Inovação, etc.",
-		)
-	
+		help_text="Maqueteria, Inovação, etc.",
+	)
+
 	tipo_sala = models.CharField(
 		max_length=10,
 		choices=TipoSalaChoices.choices,
