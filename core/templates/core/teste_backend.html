@@ -1,0 +1,187 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Teste do Backend - Claviculario</title>
+	<link rel="stylesheet" href="{% static 'core/teste_backend.css' %}">
+</head>
+<body>
+	<header class="topbar">
+		<div>
+			<p class="eyebrow">Bancada local</p>
+			<h1>Teste do Backend</h1>
+		</div>
+		<nav>
+			<a href="/api/">API</a>
+			<a href="/admin/">Admin</a>
+		</nav>
+	</header>
+
+	<main class="layout">
+		<section class="panel">
+			<h2>1. Login JWT</h2>
+			<label>Usuario</label>
+			<input id="username" value="Cadu774" autocomplete="username">
+			<label>Senha</label>
+			<input id="password" type="password" autocomplete="current-password">
+			<button id="loginBtn">Entrar</button>
+			<p class="hint">Use o superusuario que voce criou no terminal.</p>
+		</section>
+
+		<section class="panel">
+			<h2>2. Consultas</h2>
+			<div class="actions">
+				<button id="statusBtn">Status das chaves</button>
+				<button id="eventosBtn">Eventos recentes</button>
+				<button id="usuariosBtn">Usuarios</button>
+			</div>
+			<p class="hint">As chamadas usam o token salvo apos o login.</p>
+		</section>
+
+		<section class="panel">
+			<h2>3. Criar dados de teste</h2>
+			<label>Codigo da sala</label>
+			<input id="salaCodigo" value="301A">
+			<label>Andar</label>
+			<input id="salaAndar" type="number" value="3">
+			<label>Numero da chave</label>
+			<input id="chaveNumero" value="0001">
+			<button id="seedBtn">Criar sala e chave</button>
+			<p class="hint">Se ja existir, a API pode responder erro de duplicidade. Isso e esperado.</p>
+		</section>
+
+		<section class="panel">
+			<h2>4. Panico de teste</h2>
+			<label>Codigo da sala</label>
+			<input id="panicoSala" value="301A">
+			<button id="panicoBtn" class="danger">Disparar panico</button>
+			<p class="hint">Gera um evento do tipo panico no backend.</p>
+		</section>
+
+		<section class="panel wide">
+			<h2>5. WebSocket</h2>
+			<div class="actions">
+				<button id="wsBtn">Conectar WebSocket</button>
+				<button id="clearBtn">Limpar saida</button>
+			</div>
+			<p id="wsStatus" class="hint">Desconectado.</p>
+		</section>
+
+		<section class="panel wide">
+			<h2>Resposta</h2>
+			<pre id="output">Pronto para testar.</pre>
+		</section>
+	</main>
+
+	<script>
+		let token = localStorage.getItem("accessToken") || "";
+		let ws = null;
+		const output = document.querySelector("#output");
+
+		function show(data) {
+			output.textContent = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+		}
+
+		async function request(path, options = {}) {
+			const headers = {
+				"Content-Type": "application/json",
+				...(options.headers || {}),
+			};
+			if (token) headers.Authorization = `Bearer ${token}`;
+			const response = await fetch(path, {...options, headers});
+			const text = await response.text();
+			let data = text;
+			try { data = JSON.parse(text); } catch (error) {}
+			if (!response.ok) throw data;
+			return data;
+		}
+
+		document.querySelector("#loginBtn").addEventListener("click", async () => {
+			try {
+				const data = await request("/api/auth/token/", {
+					method: "POST",
+					body: JSON.stringify({
+						username: document.querySelector("#username").value,
+						password: document.querySelector("#password").value,
+					}),
+				});
+				token = data.access;
+				localStorage.setItem("accessToken", token);
+				show({ok: true, mensagem: "Login feito. Token salvo no navegador.", data});
+			} catch (error) {
+				show(error);
+			}
+		});
+
+		document.querySelector("#statusBtn").addEventListener("click", async () => {
+			try { show(await request("/api/relatorios/status-chaves/")); } catch (error) { show(error); }
+		});
+
+		document.querySelector("#eventosBtn").addEventListener("click", async () => {
+			try { show(await request("/api/relatorios/eventos-recentes/")); } catch (error) { show(error); }
+		});
+
+		document.querySelector("#usuariosBtn").addEventListener("click", async () => {
+			try { show(await request("/api/usuarios/")); } catch (error) { show(error); }
+		});
+
+		document.querySelector("#seedBtn").addEventListener("click", async () => {
+			try {
+				const sala = await request("/api/salas/", {
+					method: "POST",
+					body: JSON.stringify({
+						codigo: document.querySelector("#salaCodigo").value,
+						andar: Number(document.querySelector("#salaAndar").value),
+						numero: document.querySelector("#salaCodigo").value.replace(/\D/g, "").slice(-2) || "01",
+						descricao: "Sala criada pela pagina de teste",
+						tipo_sala: "SALA",
+					}),
+				});
+				const chave = await request("/api/chaves/", {
+					method: "POST",
+					body: JSON.stringify({
+						sala: sala.id,
+						numero: document.querySelector("#chaveNumero").value,
+						rfid_tag: `rfid-${Date.now()}`,
+						slot_x: 1,
+						slot_y: 1,
+						slot_ocupado: true,
+						descricao: "Chave criada pela pagina de teste",
+						status: "disponivel",
+					}),
+				});
+				show({sala, chave});
+			} catch (error) {
+				show(error);
+			}
+		});
+
+		document.querySelector("#panicoBtn").addEventListener("click", async () => {
+			try {
+				show(await request("/api/operacoes/panico/", {
+					method: "POST",
+					body: JSON.stringify({
+						codigo_sala: document.querySelector("#panicoSala").value,
+						origem: "pagina_teste",
+					}),
+				}));
+			} catch (error) {
+				show(error);
+			}
+		});
+
+		document.querySelector("#wsBtn").addEventListener("click", () => {
+			if (ws) ws.close();
+			ws = new WebSocket(`ws://${window.location.host}/ws/eventos/`);
+			ws.onopen = () => document.querySelector("#wsStatus").textContent = "WebSocket conectado.";
+			ws.onclose = () => document.querySelector("#wsStatus").textContent = "WebSocket desconectado.";
+			ws.onerror = () => document.querySelector("#wsStatus").textContent = "Erro no WebSocket.";
+			ws.onmessage = (event) => show({websocket: JSON.parse(event.data)});
+		});
+
+		document.querySelector("#clearBtn").addEventListener("click", () => show("Saida limpa."));
+	</script>
+</body>
+</html>
