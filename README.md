@@ -40,7 +40,7 @@ db.sqlite3
 
 - Sempre aplique migrações antes de rodar o projeto:
 ```bash
-  python manage.py migrate
+  uv run python manage.py migrate
 ```
 - Ao criar ou alterar modelos:
 ```bash
