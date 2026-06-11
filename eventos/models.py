@@ -1,34 +1,28 @@
+import uuid
+
 from django.db import models
 
 
 class Evento(models.Model):
-	"""
-	Registro imutável de tudo que acontece no sistema.
-
-	RF-35: todos os eventos persistidos com timestamp.
-	RF-36: histórico consultável por chave ou usuário.
-	RF-37: base para sincronização near real-time via WebSocket.
-	"""
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
 	class TipoChoices(models.TextChoices):
 		RETIRADA = "retirada", "Retirada"
-		DEVOLUCAO = "devolucao", "Devolução"
-		PANICO = "panico", "Pânico"
-		AUTORIZACAO = "autorizacao", "Autorização"
+		DEVOLUCAO = "devolucao", "Devolucao"
+		PANICO = "panico", "Panico"
+		AUTORIZACAO = "autorizacao", "Autorizacao"
+		ATRASO = "atraso", "Atraso"
+		STATUS_SLOT = "status_slot", "Status do slot"
+		ERRO = "erro", "Erro"
+		NEGADO = "negado", "Negado"
 
-	tipo = models.CharField(
-		max_length=20,
-		choices=TipoChoices.choices,
-		verbose_name="Tipo",
-		db_index=True,
-	)
+	tipo = models.CharField(max_length=20, choices=TipoChoices.choices, db_index=True)
 	usuario = models.ForeignKey(
 		"usuarios.Usuario",
 		on_delete=models.SET_NULL,
 		null=True,
 		blank=True,
 		related_name="eventos",
-		verbose_name="Usuário",
 	)
 	chave = models.ForeignKey(
 		"chaves.Chave",
@@ -36,7 +30,6 @@ class Evento(models.Model):
 		null=True,
 		blank=True,
 		related_name="eventos",
-		verbose_name="Chave",
 	)
 	sala = models.ForeignKey(
 		"salas.Sala",
@@ -44,28 +37,17 @@ class Evento(models.Model):
 		null=True,
 		blank=True,
 		related_name="eventos",
-		verbose_name="Sala",
 	)
 	timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
-	detalhes = models.JSONField(
-		default=dict,
-		blank=True,
-		verbose_name="Detalhes",
-		help_text="Dados extras do evento (ex: slot destino, origem do pânico)",
-	)
+	detalhes = models.JSONField(default=dict, blank=True)
 
 	def __str__(self):
-		return f"[{self.get_tipo_display()}] {self.timestamp:%d/%m/%Y %H:%M} — {self.usuario}"
+		return f"[{self.get_tipo_display()}] {self.timestamp:%d/%m/%Y %H:%M}"
 
 	class Meta:
-		verbose_name = "Evento"
-		verbose_name_plural = "Eventos"
 		ordering = ["-timestamp"]
 		indexes = [
-			# Relatórios por período (RF-31)
 			models.Index(fields=["timestamp"], name="idx_evento_timestamp"),
-			# Histórico por chave (RF-36)
-			models.Index(fields=["chave", "timestamp"], name="idx_evento_chave_timestamp"),
-			# Histórico por usuário (RF-36)
-			models.Index(fields=["usuario", "timestamp"], name="idx_evento_usuario_timestamp"),
+			models.Index(fields=["chave", "timestamp"], name="idx_evento_chave_time"),
+			models.Index(fields=["usuario", "timestamp"], name="idx_evento_usuario_time"),
 		]
