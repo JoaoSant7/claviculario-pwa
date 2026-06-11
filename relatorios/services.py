@@ -33,7 +33,10 @@ def historico_por_chave(chave):
 
 
 def retiradas_por_periodo(inicio, fim):
-	return Evento.objects.filter(tipo="retirada", timestamp__range=(inicio, fim))
+	query = Evento.objects.filter(tipo="retirada")
+	if inicio and fim:
+		query = query.filter(timestamp__range=(inicio, fim))
+	return query
 
 
 def uso_por_sala(inicio=None, fim=None):

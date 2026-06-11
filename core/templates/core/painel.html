@@ -1,0 +1,108 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Claviculario Admin</title>
+	<link rel="stylesheet" href="{% static 'core/admin_panel.css' %}">
+</head>
+<body>
+	<div id="toastHost" class="toast-host"></div>
+
+	<section id="loginView" class="login-shell">
+		<div class="login-card">
+			<div class="brand-mark">CL</div>
+			<p class="eyebrow">Claviculario Automatizado</p>
+			<h1>Entrar no painel</h1>
+			<p class="muted">Use um usuario do Django Admin ou um usuario com permissao cadastrada no backend.</p>
+			<form id="loginForm" class="form-grid">
+				<label>
+					<span>URL da API</span>
+					<input id="loginApiBase" type="url" placeholder="http://127.0.0.1:8000">
+				</label>
+				<label>
+					<span>Usuario</span>
+					<input id="loginUsername" autocomplete="username" required>
+				</label>
+				<label>
+					<span>Senha</span>
+					<input id="loginPassword" type="password" autocomplete="current-password" required>
+				</label>
+				<button class="primary-btn" type="submit">Entrar</button>
+			</form>
+		</div>
+		<div class="login-aside">
+			<h2>Teste o backend sem Postman</h2>
+			<p>Dashboard, CRUDs, operacoes, relatorios, endpoints de hardware e WebSocket em uma interface unica.</p>
+			<div class="feature-list">
+				<span>JWT</span>
+				<span>DRF</span>
+				<span>WebSocket</span>
+				<span>Relatorios</span>
+			</div>
+		</div>
+	</section>
+
+	<section id="appView" class="app-shell hidden">
+		<aside class="sidebar">
+			<div class="sidebar-brand">
+				<div class="brand-mark">CL</div>
+				<div>
+					<strong>Claviculario</strong>
+					<span>Painel Admin</span>
+				</div>
+			</div>
+			<nav id="navMenu"></nav>
+			<div class="sidebar-footer">
+				<span id="connectionStatus" class="status-pill muted-pill">WebSocket offline</span>
+			</div>
+		</aside>
+
+		<div class="content-shell">
+			<header class="topbar">
+				<div>
+					<p id="sectionEyebrow" class="eyebrow">Dashboard</p>
+					<h1 id="sectionTitle">Visao geral</h1>
+				</div>
+				<div class="topbar-actions">
+					<a class="ghost-link" href="/admin/" target="_blank">Admin</a>
+					<a class="ghost-link" href="/api/" target="_blank">API</a>
+					<div class="user-chip">
+						<span id="userInitial">U</span>
+						<div>
+							<strong id="currentUser">Usuario logado</strong>
+							<small id="apiBaseLabel"></small>
+						</div>
+					</div>
+					<button id="logoutBtn" class="secondary-btn">Sair</button>
+				</div>
+			</header>
+
+			<main>
+				<section id="dashboardPage" class="page"></section>
+				<section id="resourcePage" class="page hidden"></section>
+				<section id="operationsPage" class="page hidden"></section>
+				<section id="reportsPage" class="page hidden"></section>
+				<section id="hardwarePage" class="page hidden"></section>
+				<section id="settingsPage" class="page hidden"></section>
+			</main>
+		</div>
+	</section>
+
+	<div id="modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+		<div class="modal-card">
+			<div class="modal-header">
+				<div>
+					<p id="modalEyebrow" class="eyebrow">Formulario</p>
+					<h2 id="modalTitle">Registro</h2>
+				</div>
+				<button id="modalClose" class="icon-btn" type="button">x</button>
+			</div>
+			<form id="modalForm" class="modal-body"></form>
+		</div>
+	</div>
+
+	<script src="{% static 'core/admin_panel.js' %}"></script>
+</body>
+</html>

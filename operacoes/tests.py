@@ -28,7 +28,7 @@ from .services import (
 
 class RegrasBackendTests(TestCase):
 	def setUp(self):
-		self.agora = timezone.now()
+		self.agora = timezone.now().replace(hour=10, minute=0, second=0, microsecond=0)
 		self.coordenador = self.usuario("0000000001", "coord", "coordenacao", "coord")
 		self.professor = self.usuario("0000000002", "prof", "professor", "prof")
 		self.aluno = self.usuario("0000000003", "aluno", "aluno", "aluno")
@@ -65,12 +65,15 @@ class RegrasBackendTests(TestCase):
 		)
 
 	def autorizar(self, usuario):
+		agora_real = timezone.now()
+		inicio = min(self.agora, agora_real) - timedelta(minutes=5)
+		fim = max(self.agora, agora_real) + timedelta(hours=2)
 		return Autorizacao.objects.create(
 			usuario=usuario,
 			sala=self.sala,
 			concedida_por=self.coordenador,
-			valida_de=self.agora - timedelta(minutes=5),
-			valida_ate=self.agora + timedelta(hours=2),
+			valida_de=inicio,
+			valida_ate=fim,
 		)
 
 	def test_usuario_inexistente_tentando_retirar(self):

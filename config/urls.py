@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from autorizacoes.views import AutorizacaoViewSet
 from chaves.views import ChaveViewSet
-from core.views import teste_backend
+from core.views import painel, teste_backend
 from eventos.views import EventoViewSet
 from hardware import views as hardware_views
 from operacoes.views import (
@@ -39,7 +39,8 @@ router.register("emprestimos", EmprestimoViewSet)
 router.register("timetable", TimetableViewSet)
 
 urlpatterns = [
-	path("", teste_backend, name="teste-backend-home"),
+	path("", painel, name="painel-home"),
+	path("painel/", painel, name="painel"),
 	path("teste/", teste_backend, name="teste-backend"),
 	path("admin/", admin.site.urls),
 	path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
