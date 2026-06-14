@@ -10,33 +10,47 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-8q1li)0coqhn)-ba1!=f2adpq6jk63kip_6%*+3@w9)0&8kt3v"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-local-dev-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() in {"1", "true", "yes", "on"}
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+	host.strip()
+	for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+	if host.strip()
+]
+HARDWARE_TOKEN = os.getenv("HARDWARE_TOKEN", "")
 
 
 # Application definition
 
 INSTALLED_APPS = [
+	"daphne",
 	"django.contrib.admin",
 	"django.contrib.auth",
 	"django.contrib.contenttypes",
 	"django.contrib.sessions",
 	"django.contrib.messages",
 	"django.contrib.staticfiles",
+	"rest_framework",
+	"django_filters",
+	"django_celery_beat",
 	"core",
 	"usuarios",
 	"salas",
@@ -45,6 +59,8 @@ INSTALLED_APPS = [
 	"operacoes",
 	"eventos",
 	"relatorios",
+	"timetable",
+	"hardware",
 ]
 
 MIDDLEWARE = [
@@ -75,16 +91,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-	"default": {
-		"ENGINE": "django.db.backends.sqlite3",
-		"NAME": BASE_DIR / "db.sqlite3",
-	}
+	"default": dj_database_url.config(
+		default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+		conn_max_age=600,
+	)
 }
 
 
@@ -123,3 +140,33 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+AUTH_USER_MODEL = "usuarios.Usuario"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+	"DEFAULT_AUTHENTICATION_CLASSES": (
+		"rest_framework_simplejwt.authentication.JWTAuthentication",
+	),
+	"DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+	"DEFAULT_FILTER_BACKENDS": (
+		"django_filters.rest_framework.DjangoFilterBackend",
+		"rest_framework.filters.SearchFilter",
+		"rest_framework.filters.OrderingFilter",
+	),
+}
+
+REDIS_URL = os.getenv("REDIS_URL")
+if REDIS_URL:
+	CHANNEL_LAYERS = {
+		"default": {
+			"BACKEND": "channels_redis.core.RedisChannelLayer",
+			"CONFIG": {"hosts": [REDIS_URL]},
+		}
+	}
+else:
+	CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", REDIS_URL or "memory://")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", REDIS_URL or "cache+memory://")
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
