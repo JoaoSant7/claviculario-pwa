@@ -11,10 +11,14 @@ class Evento(models.Model):
 	"""
 
 	class TipoChoices(models.TextChoices):
-		RETIRADA = "retirada", "Retirada"
-		DEVOLUCAO = "devolucao", "Devolução"
-		PANICO = "panico", "Pânico"
-		AUTORIZACAO = "autorizacao", "Autorização"
+    RETIRADA = "retirada", "Retirada"
+    DEVOLUCAO = "devolucao", "Devolução"
+    PANICO = "panico", "Pânico"
+    AUTORIZACAO = "autorizacao", "Autorização"
+    ATRASO = "atraso", "Atraso"
+    STATUS_SLOT = "status_slot", "Status do slot"
+    ERRO = "erro", "Erro"
+    NEGADO = "negado", "Negado"
 
 	tipo = models.CharField(
 		max_length=20,
