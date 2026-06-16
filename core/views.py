@@ -1,3 +1,9 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def teste_backend(request):
+	return render(request, "core/painel.html")
+
+
+def painel(request):
+	return render(request, "core/painel.html")
