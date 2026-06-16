@@ -10,19 +10,6 @@ class TurmaSerializer(serializers.ModelSerializer):
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Usuario
-        fields = [
-            "id", "username", "nome", "sobrenome", "matricula",
-            "email", "rfid_tag", "papel", "ativo", "criado_em", "password",
-        ]
-        extra_kwargs = {
-            "rfid_tag": {"write_only": True, "required": False},
-            "password": {"write_only": True, "required": False},
-        }
-
-
-class UsuarioSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Usuario
 		fields = [
