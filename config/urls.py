@@ -17,6 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from hardware import views as hardware_views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+	path("admin/", admin.site.urls),
+	path("api/hardware/rfid-usuario/", hardware_views.rfid_usuario, name="hardware-rfid-usuario"),
+	path("api/hardware/rfid-chave/", hardware_views.rfid_chave, name="hardware-rfid-chave"),
+	path("api/hardware/panico/", hardware_views.panico, name="hardware-panico"),
+	path("api/hardware/status-slot/", hardware_views.status_slot, name="hardware-status-slot"),
 ]
